@@ -28,8 +28,61 @@ xxx indicates that all the cores defined by xxx will be used for benchmarking(by
 |AVX512f|fp32/fp64|From Skylake X/Zen4|
 |AVX512_VNNI|int8/int16|From IceLake|
 |AVX_VNNI|int8/int16|From Alder Lake|
+|AMX|int8/bf16|From Sapphire Rapids|
 
 ## Some benchmark results
+
+### Intel Sapphire Rapids w9-3475X
+
+For single core:
+
+<pre>
+$ ./cpufp --thread_pool=[0]
+Number Threads: 1
+Thread Pool Binding: 0
+--------------------------------------------------
+| Instruction Set | Data Type | Peak Performance |
+| AVX_VNNI        | INT8      | 650.72 GOPS      |
+| AVX_VNNI        | INT16     | 326.56 GOPS      |
+| AVX512_VNNI     | INT8      | 1104.1 GOPS      |
+| AVX512_VNNI     | INT16     | 550.56 GOPS      |
+| AVX512F         | FP32      | 331.01 GFLOPS    |
+| AVX512F         | FP64      | 164.96 GFLOPS    |
+| FMA             | FP32      | 165.54 GFLOPS    |
+| FMA             | FP64      | 82.895 GFLOPS    |
+| AVX             | FP32      | 123.92 GFLOPS    |
+| AVX             | FP64      | 58.035 GFLOPS    |
+| SSE             | FP32      | 62.009 GFLOPS    |
+| SSE             | FP64      | 30.862 GFLOPS    |
+| AMX             | INT8      | 663.56 GOPS      |
+| AMX             | BF16      | 663.11 GFLOPS    |
+--------------------------------------------------
+</pre>
+
+For multiple cores:
+
+<pre>
+$ ./cpufp --thread_pool=[0-35]
+Number Threads: 36
+Thread Pool Binding: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+--------------------------------------------------
+| Instruction Set | Data Type | Peak Performance |
+| AVX_VNNI        | INT8      | 17665 GOPS       |
+| AVX_VNNI        | INT16     | 8718.8 GOPS      |
+| AVX512_VNNI     | INT8      | 30483 GOPS       |
+| AVX512_VNNI     | INT16     | 15163 GOPS       |
+| AVX512F         | FP32      | 7412.2 GFLOPS    |
+| AVX512F         | FP64      | 3617.4 GFLOPS    |
+| FMA             | FP32      | 4470 GFLOPS      |
+| FMA             | FP64      | 2232.8 GFLOPS    |
+| AVX             | FP32      | 3108.5 GFLOPS    |
+| AVX             | FP64      | 1571 GFLOPS      |
+| SSE             | FP32      | 1724.4 GFLOPS    |
+| SSE             | FP64      | 861.43 GFLOPS    |
+| AMX             | INT8      | 15613 GOPS       |
+| AMX             | BF16      | 14617 GFLOPS     |
+--------------------------------------------------
+</pre>
 
 ### Intel Alder Lake i7-1280p
 
