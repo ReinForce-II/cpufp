@@ -24,6 +24,9 @@ void cpufp_kernel_x86_avx512_vnni_int16(int64_t);
 
 void cpufp_kernel_x86_avx_vnni_int8(int64_t);
 void cpufp_kernel_x86_avx_vnni_int16(int64_t);
+
+void cpufp_kernel_x86_amx_int8(int64_t);
+void cpufp_kernel_x86_amx_bf16(int64_t);
 }
 
 static void parse_thread_pool(char *sets,

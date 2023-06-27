@@ -10,6 +10,7 @@ typedef enum
     _CPUID_X86_AVX512F_     = 0x8,
     _CPUID_X86_AVX512_VNNI_ = 0x10,
     _CPUID_X86_AVX_VNNI_    = 0x20,
+    _CPUID_X86_AMX_         = 0x40,
 } cpuid_x86_feature_t;
 
 struct cpuid_t
@@ -94,6 +95,18 @@ static void cpuid_x86_init()
     {
         SET_FEAT(_CPUID_X86_AVX_VNNI_);
     }
+
+    /*
+     * Test AMX
+     */
+    cpuid.ieax = 0x7;
+    cpuid.iecx = 0x0;
+    cpuid_x86_exec(&cpuid);
+
+    if (BIT_TEST(cpuid.edx, 25))
+    {
+        SET_FEAT(_CPUID_X86_AMX_);
+    }
 }
 
 static int cpuid_x86_support(cpuid_x86_feature_t isa)
@@ -127,6 +140,10 @@ void gen_build_kernel_sh()
     if (cpuid_x86_support(_CPUID_X86_AVX_VNNI_))
     {
         bf << "g++ -c asm/cpufp_kernel_x86_avx_vnni.S" << endl;
+    }
+    if (cpuid_x86_support(_CPUID_X86_AMX_))
+    {
+        bf << "g++ -mamx-tile -mamx-int8 -mamx-bf16 -c -xc c/cpufp_kernel_x86_amx.c" << endl;
     }
     bf.close();
 }
@@ -189,6 +206,15 @@ void gen_cpufp_include_cpp()
         cf << "        0x30000000LL, 32LL," << endl;
         cf << "        cpufp_kernel_x86_sse_fp64);" << endl;
     }
+    if (cpuid_x86_support(_CPUID_X86_AMX_))
+    {
+        cf << "    reg_new_isa(\"AMX\", \"INT8\", \"GOPS\"," << endl;
+        cf << "        0x10000000LL, 2048LL," << endl;
+        cf << "        cpufp_kernel_x86_amx_int8);" << endl;
+        cf << "    reg_new_isa(\"AMX\", \"BF16\", \"GFLOPS\"," << endl;
+        cf << "        0x10000000LL, 2048LL," << endl;
+        cf << "        cpufp_kernel_x86_amx_bf16);" << endl;
+    }
     cf << "}" << endl;
     cf.close();
 }
@@ -220,6 +246,10 @@ void gen_link()
     if (cpuid_x86_support(_CPUID_X86_AVX_VNNI_))
     {
         lf << " cpufp_kernel_x86_avx_vnni.o";
+    }
+    if (cpuid_x86_support(_CPUID_X86_AMX_))
+    {
+        lf << " cpufp_kernel_x86_amx.o";
     }
     lf << endl;
     lf.close();
