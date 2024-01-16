@@ -209,10 +209,10 @@ void gen_cpufp_include_cpp()
     if (cpuid_x86_support(_CPUID_X86_AMX_))
     {
         cf << "    reg_new_isa(\"AMX\", \"INT8\", \"GOPS\"," << endl;
-        cf << "        0x10000000LL, 2048LL," << endl;
+        cf << "        0x10000000LL, 32768LL," << endl;
         cf << "        cpufp_kernel_x86_amx_int8);" << endl;
         cf << "    reg_new_isa(\"AMX\", \"BF16\", \"GFLOPS\"," << endl;
-        cf << "        0x10000000LL, 2048LL," << endl;
+        cf << "        0x10000000LL, 16384LL," << endl;
         cf << "        cpufp_kernel_x86_amx_bf16);" << endl;
     }
     cf << "}" << endl;
